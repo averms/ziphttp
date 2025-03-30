@@ -46,7 +46,7 @@ func mainWithErr() error {
 	protos.SetHTTP1(true)
 	protos.SetUnencryptedHTTP2(true)
 	server := http.Server{
-		Handler:   loggingHandler(http.FileServerFS(zipReader)),
+		Handler:   logging(http.FileServerFS(zipReader)),
 		Protocols: &protos,
 	}
 
@@ -54,7 +54,7 @@ func mainWithErr() error {
 	return server.Serve(ln)
 }
 
-func loggingHandler(h http.Handler) http.Handler {
+func logging(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Println(r.Method, *r.URL)
 		h.ServeHTTP(w, r)
