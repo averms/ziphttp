@@ -6,8 +6,9 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 )
 
 func main() {
@@ -18,15 +19,16 @@ func main() {
 }
 
 func mainWithErr() error {
-	socketAddr := flag.StringP("bind", "b", "localhost:34103", "address:port to bind to")
-	helpRequested := flag.BoolP("help", "h", false, "show help")
-	flag.Parse()
-	filename := flag.Arg(0)
+	socketAddr := pflag.StringP("bind", "b", "localhost:34103", "address:port to bind to")
+	helpRequested := pflag.BoolP("help", "h", false, "show help")
+	pflag.Parse()
+	filename := pflag.Arg(0)
 
 	if *helpRequested || filename == "" {
+		pflag.CommandLine.SetOutput(os.Stdout)
 		fmt.Println("Usage: simplehttp [-bh] <PATH TO ZIP FILE>")
 		fmt.Println()
-		flag.PrintDefaults()
+		pflag.PrintDefaults()
 		return nil
 	}
 
