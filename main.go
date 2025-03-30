@@ -18,7 +18,7 @@ func main() {
 }
 
 func mainWithErr() error {
-	socketAddr := flag.StringP("bind", "b", "localhost:0", "address:port to bind to")
+	socketAddr := flag.StringP("bind", "b", "localhost:34103", "address:port to bind to")
 	helpRequested := flag.BoolP("help", "h", false, "show help")
 	flag.Parse()
 	filename := flag.Arg(0)
@@ -56,7 +56,7 @@ func mainWithErr() error {
 
 func loggingHandler(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println(r.Method, r.URL)
+		log.Println(r.Method, *r.URL)
 		h.ServeHTTP(w, r)
 	})
 }
