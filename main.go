@@ -28,7 +28,7 @@ func mainWithErr() error {
 
 	if *helpRequested || filename == "" {
 		pflag.CommandLine.SetOutput(os.Stdout)
-		fmt.Println("Usage: ziphttp [-bh] <PATH TO ZIP FILE>")
+		fmt.Println("Usage: ziphttp [OPTIONS] <PATH TO ZIP FILE>")
 		fmt.Println()
 		pflag.PrintDefaults()
 		return nil
