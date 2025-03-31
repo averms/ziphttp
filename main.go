@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/spf13/pflag"
 )
@@ -49,8 +50,10 @@ func mainWithErr() error {
 	protos.SetHTTP1(true)
 	protos.SetUnencryptedHTTP2(true)
 	server := http.Server{
-		Handler:   logging(http.FileServerFS(zipReader)),
-		Protocols: &protos,
+		// mitigate Slowloris attack.
+		ReadHeaderTimeout: 30 * time.Second,
+		Handler:           logging(http.FileServerFS(zipReader)),
+		Protocols:         &protos,
 	}
 
 	log.Printf("serving %v on http://%v", filename, ln.Addr())
