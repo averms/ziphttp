@@ -1,3 +1,4 @@
+// Serve a zipped website over HTTP.
 package main
 
 import (
