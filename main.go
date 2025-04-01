@@ -16,7 +16,8 @@ import (
 func main() {
 	err := mainWithErr()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintf(os.Stderr, "Error: %v.\n", err)
+		os.Exit(1)
 	}
 }
 
@@ -24,9 +25,9 @@ func mainWithErr() error {
 	socketAddr := pflag.StringP("bind", "b", "localhost:34103", "address:port to bind to")
 	helpRequested := pflag.BoolP("help", "h", false, "show help")
 	pflag.Parse()
-	filename := pflag.Arg(0)
 
-	if *helpRequested || filename == "" {
+	if *helpRequested || len(pflag.Args()) < 1 {
+		// If help was explicitly requested we print to stdout.
 		pflag.CommandLine.SetOutput(os.Stdout)
 		fmt.Println("Usage: ziphttp [OPTIONS] <PATH TO ZIP FILE>")
 		fmt.Println()
@@ -34,6 +35,7 @@ func mainWithErr() error {
 		return nil
 	}
 
+	filename := pflag.Args()[0]
 	zipReader, err := zip.OpenReader(filename)
 	if err != nil {
 		return err
