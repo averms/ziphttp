@@ -11,6 +11,11 @@ enable = [
     "fieldalignment",
 ]
 
+[linters.exclusions]
+presets = [
+    "std-error-handling",
+]
+
 [formatters]
 enable = [
     "golines",
