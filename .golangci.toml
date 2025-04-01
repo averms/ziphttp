@@ -3,6 +3,12 @@ version = "2"
 [linters]
 enable = [
     "gosec",
+    "govet",
+]
+
+[linters.settings.govet]
+enable = [
+    "fieldalignment",
 ]
 
 [formatters]
