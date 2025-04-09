@@ -1,5 +1,8 @@
 #!/bin/sh
 set -eu
 
-export GOAMD64=v3
-go build -trimpath -tags osusergo,netgo -o target/ .
+args="-ldflags "-s" -trimpath -tags osusergo,netgo"
+
+GOAMD64=v3 go build $args -o target/ .
+# GOOS=windows go build $args -o target/ .
+# GOOS=darwin GOARCH=arm64 $args -o target/ .
