@@ -65,7 +65,7 @@ func mainWithErr() error {
 	server := http.Server{
 		// mitigate Slowloris attack.
 		ReadHeaderTimeout: 30 * time.Second,
-		Handler:           logging(http.FileServerFS(fsys)),
+		Handler:           middleware(http.FileServerFS(fsys)),
 		Protocols:         &protos,
 	}
 
@@ -73,9 +73,11 @@ func mainWithErr() error {
 	return server.Serve(ln)
 }
 
-func logging(h http.Handler) http.Handler {
+func middleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// log
 		log.Println(r.Method, r.URL.Path)
+		// don't cache
 		w.Header().Set("Cache-Control", "no-cache, no-store")
 		h.ServeHTTP(w, r)
 	})
