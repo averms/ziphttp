@@ -30,7 +30,7 @@ func mainWithErr() error {
 	if *helpRequested || len(pflag.Args()) < 1 {
 		// If help was explicitly requested we print to stdout.
 		pflag.CommandLine.SetOutput(os.Stdout)
-		fmt.Println("Usage: ziphttp [OPTIONS] <PATH TO ZIP FILE>")
+		fmt.Println("Usage: ziphttp [OPTIONS] <PATH>")
 		fmt.Println()
 		pflag.PrintDefaults()
 		return nil
