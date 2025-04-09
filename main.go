@@ -4,6 +4,7 @@ package main
 import (
 	"archive/zip"
 	"fmt"
+	"io/fs"
 	"log"
 	"net"
 	"net/http"
@@ -36,11 +37,21 @@ func mainWithErr() error {
 	}
 
 	filename := pflag.Args()[0]
+
+	var fsys fs.FS
+
 	zipReader, err := zip.OpenReader(filename)
 	if err != nil {
-		return err
+		root, err := os.OpenRoot(filename)
+		if err != nil {
+			return fmt.Errorf("couldn't open '%v' as a zip file or a directory", filename)
+		}
+		defer root.Close()
+		fsys = root.FS()
+	} else {
+		defer zipReader.Close()
+		fsys = zipReader
 	}
-	defer zipReader.Close()
 
 	ln, err := net.Listen("tcp", *socketAddr)
 	if err != nil {
@@ -54,7 +65,7 @@ func mainWithErr() error {
 	server := http.Server{
 		// mitigate Slowloris attack.
 		ReadHeaderTimeout: 30 * time.Second,
-		Handler:           logging(http.FileServerFS(zipReader)),
+		Handler:           logging(http.FileServerFS(fsys)),
 		Protocols:         &protos,
 	}
 
