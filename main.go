@@ -65,6 +65,7 @@ func mainWithErr() error {
 func logging(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Println(r.Method, r.URL.Path)
+		w.Header().Set("Cache-Control", "no-cache, no-store")
 		h.ServeHTTP(w, r)
 	})
 }
