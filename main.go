@@ -1,4 +1,5 @@
-// Serve a zipped website or a directory over HTTP.
+// Serve a (possibly zipped) static website over HTTP.
+
 package main
 
 import (
@@ -37,20 +38,11 @@ func mainWithErr() error {
 	}
 
 	filename := pflag.Args()[0]
-
-	var zipOrDir fs.FS
-	zipReader, err := zip.OpenReader(filename)
-	if err != nil {
-		root, err := os.OpenRoot(filename)
-		if err != nil {
-			return fmt.Errorf("couldn't open '%v' as a zip file or a directory", filename)
-		}
-		defer root.Close()
-		zipOrDir = root.FS()
-	} else {
-		defer zipReader.Close()
-		zipOrDir = zipReader
+	zipOrDir, zipOrDirClose := openAsFS(filename)
+	if zipOrDir == nil {
+		return fmt.Errorf("couldn't open '%v' as a zip file or a directory", filename)
 	}
+	defer zipOrDirClose()
 
 	ln, err := net.Listen("tcp", *socketAddr)
 	if err != nil {
@@ -70,6 +62,24 @@ func mainWithErr() error {
 
 	log.Printf("serving %v on http://%v", filename, ln.Addr())
 	return server.Serve(ln)
+}
+
+func openAsFS(path string) (fs.FS, func()) {
+	zipReader, err := zip.OpenReader(path)
+	if err == nil {
+		return zipReader, func() {
+			_ = zipReader.Close()
+		}
+	}
+
+	dir, err := os.OpenRoot(path)
+	if err == nil {
+		return dir.FS(), func() {
+			_ = dir.Close()
+		}
+	}
+
+	return nil, nil
 }
 
 func middleware(h http.Handler) http.Handler {
