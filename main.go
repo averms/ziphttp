@@ -54,7 +54,7 @@ func mainWithErr() error {
 	protos.SetHTTP1(true)
 	protos.SetUnencryptedHTTP2(true)
 	server := http.Server{
-		// mitigate Slowloris attack.
+		// mitigate Slowloris attack
 		ReadHeaderTimeout: 30 * time.Second,
 		Handler:           middleware(http.FileServerFS(zipOrDir)),
 		Protocols:         &protos,
@@ -64,6 +64,7 @@ func mainWithErr() error {
 	return server.Serve(ln)
 }
 
+// Open path as a zip file or a directory. Returns an fs.FS and the cleanup function.
 func openAsFS(path string) (fs.FS, func()) {
 	zipReader, err := zip.OpenReader(path)
 	if err == nil {
