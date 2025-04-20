@@ -18,6 +18,5 @@ presets = [
 
 [formatters]
 enable = [
-    "golines",
     "goimports",
 ]
