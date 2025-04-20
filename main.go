@@ -1,5 +1,4 @@
 // Serve a (possibly zipped) static website over HTTP.
-
 package main
 
 import (
