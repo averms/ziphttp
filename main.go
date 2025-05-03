@@ -86,8 +86,11 @@ func middleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// log
 		log.Println(r.Method, r.URL.Path)
-		// don't cache
-		w.Header().Set("Cache-Control", "no-cache")
+		// The issue with caching is that restarting ziphttp in a different
+		// directory will use the Last-Modified times from the filesystem and the
+		// browser won't realize ziphttp has been restarted.
+		w.Header().Set("Cache-Control", "no-store")
+
 		h.ServeHTTP(w, r)
 	})
 }
