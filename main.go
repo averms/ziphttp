@@ -87,7 +87,7 @@ func middleware(h http.Handler) http.Handler {
 		// log
 		log.Println(r.Method, r.URL.Path)
 		// don't cache
-		w.Header().Set("Cache-Control", "no-cache, no-store")
+		w.Header().Set("Cache-Control", "no-cache")
 		h.ServeHTTP(w, r)
 	})
 }
