@@ -1,5 +1,4 @@
-// Deprecated: ziphttp has moved to go.averms.org/ziphttp.
-module go.raoverma.com/ziphttp
+module go.averms.org/ziphttp
 
 go 1.25.0
 
